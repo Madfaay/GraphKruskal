@@ -1,12 +1,12 @@
 package Kruskal;
 
 public class Kruskal {
-    void initKruskal(Edge[] aretes)
+    void initKruskal(Iterable<Edge> aretes)
     {
 
     }
 
-    void initKruskal(Edge[] aretes , String fichier)
+    void initKruskal(Iterable<Edge> aretes , String fichier)
     {
 
     }
