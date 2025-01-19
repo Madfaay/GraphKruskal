@@ -33,5 +33,17 @@ public class Edge implements Comparable<Edge> {
                 (source == autre.destination && destination == autre.source);
     }
 
+    public int getSrc() {
+        return source;
+    }
+
+    public int getDest() {
+        return destination;
+    }
+
+    public int getWeight() {
+        return poids;
+    }
+
 
 }
