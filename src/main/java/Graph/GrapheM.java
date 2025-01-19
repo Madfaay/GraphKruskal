@@ -4,24 +4,10 @@ import Kruskal.Edge;
 import ParcoursAlgo.Dfs;
 
 public class GrapheM extends Graph implements Dfs {
-
-    int[][] adjacence;
+    private int[][] adjacence;
 
     public GrapheM(String fileNameGraph) {
         super(fileNameGraph);
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Matrice d'adjacence :\n");
-        for (int i = 0; i < ordre; i++) {
-            for (int j = 0; j < ordre; j++) {
-                sb.append(adjacence[i][j]).append(" ");
-            }
-            sb.append("\n");
-        }
-        return sb.toString();
     }
 
     @Override
@@ -30,38 +16,56 @@ public class GrapheM extends Graph implements Dfs {
     }
 
     @Override
-    public void ajoutAdjacence(int sommet, int voisin, int poids) {
+    protected void ajoutAdjacence(int sommet, int voisin, int poids) {
         adjacence[sommet - 1][voisin - 1] = poids;
         adjacence[voisin - 1][sommet - 1] = poids;
     }
 
     @Override
-    protected Edge[] aretesOrdonnesComposant(int sommetDebut) {
-        Edge[] edges = new Edge[ordre * (ordre - 1) / 2]; // Taille maximale pour un graphe complet
-        boolean[] visites = new boolean[ordre];
-        int[] index = {0}; // Pour suivre l'indice courant dans le tableau
-
-        dfs(sommetDebut, visites, edges, index);
-
-        // Créer un tableau compact contenant seulement les arêtes collectées
-        Edge[] resultat = new Edge[index[0]];
-        System.arraycopy(edges, 0, resultat, 0, index[0]);
-        return resultat;
-    }
-
-    @Override
-    public void dfs(int sommet, boolean[] visites, Edge[] edges, int[] index) {
+    public void dfs(int sommet, boolean[] visites, Edge[] aretes, int[] index) {
         visites[sommet - 1] = true;
 
-        for (int voisin = sommet - 1; voisin < ordre; voisin++) { // Parcourir la diagonale supérieure
-            if (adjacence[sommet - 1][voisin] > 0 && !visites[voisin]) {
-                // Ajouter l'arête en maintenant le tableau trié
-                Edge edge = new Edge(sommet, voisin + 1, adjacence[sommet - 1][voisin]);
-                insererAvecTri(edges, index, edge);
+        for (int voisin = 0; voisin < ordre; voisin++) {
+            if (adjacence[sommet - 1][voisin] > 0) { // Si une arête existe
+                Edge nouvelleArete = new Edge(sommet, voisin + 1, adjacence[sommet - 1][voisin]);
 
-                // Appel récursif pour explorer le voisin
-                dfs(voisin + 1, visites, edges, index);
+                // Ajouter l'arête si elle n'est pas déjà ajoutée
+                if (!isAreteDejaAjoutee(aretes, index[0], nouvelleArete)) {
+                    insererAvecTri(aretes, index, nouvelleArete);
+                }
+
+                // Continuer le DFS pour explorer les voisins
+                if (!visites[voisin]) {
+                    dfs(voisin + 1, visites, aretes, index);
+                }
             }
         }
+
+        // Vérification des sommets après avoir parcouru tous les voisins
+        connexe = true;
+        for (boolean visite : visites) {
+            if (!visite) {
+                connexe = false;
+                break;
+            }
+        }
+    }
+
+
+
+
+
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Matrice d'adjacence:\n");
+        for (int i = 0; i < ordre; i++) {
+            for (int j = 0; j < ordre; j++) {
+                sb.append(adjacence[i][j]).append(" ");
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
     }
 }

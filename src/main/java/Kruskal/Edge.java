@@ -1,5 +1,7 @@
 package Kruskal;
 
+import java.util.Objects;
+
 public class Edge implements Comparable<Edge> {
     int source;
     int destination;
@@ -20,4 +22,16 @@ public class Edge implements Comparable<Edge> {
     public String toString() {
         return "(" + source + " -> " + destination + ", poids: " + poids + ")";
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Edge autre = (Edge) obj;
+
+        return (source == autre.source && destination == autre.destination) ||
+                (source == autre.destination && destination == autre.source);
+    }
+
+
 }

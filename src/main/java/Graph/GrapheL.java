@@ -5,7 +5,7 @@ import Kruskal.Edge;
 import ParcoursAlgo.Dfs;
 
 public class GrapheL extends Graph implements Dfs {
-    ListeChainee<Arete>[] adjacence; // Tableau de listes chaînées d'arêtes
+    private ListeChainee<Arete>[] adjacence;
 
     public GrapheL(String fileNameGraph) {
         super(fileNameGraph);
@@ -13,9 +13,10 @@ public class GrapheL extends Graph implements Dfs {
 
     @Override
     protected void initGraph() {
-        adjacence = new ListeChainee[ordre]; // Initialisation du tableau
-        for (int i = 0; i < ordre; i++)
-            adjacence[i] = new ListeChainee<Arete>();
+        adjacence = new ListeChainee[ordre];
+        for (int i = 0; i < ordre; i++) {
+            adjacence[i] = new ListeChainee<>();
+        }
     }
 
     @Override
@@ -25,37 +26,48 @@ public class GrapheL extends Graph implements Dfs {
     }
 
     @Override
-    protected Edge[] aretesOrdonnesComposant(int sommetDebut) {
-        Edge[] edges = new Edge[ordre * ordre]; // Taille maximale possible
-        boolean[] visites = new boolean[ordre];
-        int[] index = {0}; // Pour suivre l'indice courant dans le tableau
-
-        dfs(sommetDebut, visites, edges, index);
-
-        // Créer un tableau compact contenant seulement les arêtes collectées
-        Edge[] resultat = new Edge[index[0]];
-        System.arraycopy(edges, 0, resultat, 0, index[0]);
-        return resultat;
-    }
-
-    @Override
-    public void dfs(int sommet, boolean[] visites, Edge[] edges, int[] index) {
+    public void dfs(int sommet, boolean[] visites, Edge[] aretes, int[] index) {
         visites[sommet - 1] = true;
 
+        // Parcourir toutes les arêtes du sommet courant
         for (Arete arete : adjacence[sommet - 1]) {
-            if (!visites[arete.getVoisin() - 1]) {
-                // Ajouter l'arête en maintenant le tableau trié
-                Edge edge = new Edge(sommet, arete.getVoisin(), arete.getPoids());
-                insererAvecTri(edges, index, edge);
-                dfs(arete.getVoisin(), visites, edges, index);
+            int voisin = arete.getVoisin();
+            Edge nouvelleArete = new Edge(sommet, voisin, arete.getPoids());
+
+            // Ajouter l'arête si elle n'a pas encore été ajoutée
+            if (!isAreteDejaAjoutee(aretes, index[0], nouvelleArete)) {
+                insererAvecTri(aretes, index, nouvelleArete);
+            }
+
+            // Continuer le DFS si le voisin n'a pas encore été visité
+            if (!visites[voisin - 1]) {
+                dfs(voisin, visites, aretes, index);
+            }
+        }
+
+        connexe = true;
+        for (boolean visite : visites) {
+            if (!visite) {
+                connexe = false;
+                break;
             }
         }
     }
 
-    // Classe interne pour représenter une arête dans la liste d'adjacence
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Liste d'adjacence:\n");
+        for (int i = 0; i < ordre; i++) {
+            sb.append("Sommet ").append(i + 1).append(" : ").append(adjacence[i]).append("\n");
+        }
+        return sb.toString();
+    }
+
     private static class Arete {
-        int voisin;
-        int poids;
+        private final int voisin;
+        private final int poids;
 
         public Arete(int voisin, int poids) {
             this.voisin = voisin;
@@ -74,38 +86,5 @@ public class GrapheL extends Graph implements Dfs {
         public String toString() {
             return "(Voisin: " + voisin + ", Poids: " + poids + ")";
         }
-    }
-
-    // Getter pour les arêtes
-    public ListeChainee<Arete>[] getAretes() {
-        return adjacence;
-    }
-
-    // Méthode pour ajouter une arête
-    public void ajouteAdjacence(int sommet, int voisin, int distance) {
-        if (sommet < 1 || sommet > ordre || voisin < 1 || voisin > ordre) {
-            throw new IllegalArgumentException("Sommet ou voisin invalide");
-        }
-        adjacence[sommet - 1].ajouter(new Arete(voisin, distance));
-        adjacence[voisin - 1].ajouter(new Arete(sommet, distance));
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Graphe (ordre: ").append(ordre).append("):\n");
-
-        for (int i = 0; i < ordre; i++) {
-            sb.append("Sommet ").append(i + 1).append(" : ");
-            ListeChainee<Arete> listeAretes = adjacence[i];
-            if (listeAretes.taille() == 0) {
-                sb.append("aucune arête");
-            } else {
-                sb.append(listeAretes);
-            }
-            sb.append("\n");
-        }
-
-        return sb.toString();
     }
 }

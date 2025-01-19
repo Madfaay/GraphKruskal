@@ -1,36 +1,41 @@
 package Graph;
 
 import Kruskal.Edge;
+import ParcoursAlgo.Parcours;
 
 import java.io.File;
 import java.util.Scanner;
 
-public  abstract class  Graph {
-    protected  final int  ordre   ;
-    public boolean connexe ;
+public abstract class Graph implements Parcours {
+    protected final int ordre;
+    public boolean connexe = true; //par default
 
-    public Graph(String fileNameGraph)
+
+    public int getOrdre()
     {
+        return ordre;
+    }
+    public Graph(String fileNameGraph) {
         File file = new File(fileNameGraph);
         Scanner sc = null;
         try {
             sc = new Scanner(file);
-        }
-        catch(Exception e) {
-            System.out.printf("Error new Graph : \"%s\" doesn\'t exist.\n", fileNameGraph);
-            e.getStackTrace();
+        } catch (Exception e) {
+            System.out.printf("Error new Graph: \"%s\" doesn't exist.\n", fileNameGraph);
+            e.printStackTrace();
             System.exit(1);
         }
-        // If we can open the file.
-        ordre = sc.nextInt();
 
+        // Lecture de l'ordre du graphe
+        ordre = sc.nextInt();
         this.initGraph();
 
-        for(int i = 0; i < ordre; ++i){
+        // Lecture des aretes
+        for (int i = 0; i < ordre; ++i) {
             int vertexNb = sc.nextInt();
             int neighbor = sc.nextInt();
             int weight = 0;
-            while(neighbor != 0){
+            while (neighbor != 0) {
                 weight = sc.nextInt();
                 this.ajoutAdjacence(vertexNb, neighbor, weight);
                 neighbor = sc.nextInt();
@@ -39,15 +44,9 @@ public  abstract class  Graph {
         sc.close();
     }
 
-    protected abstract  void initGraph();
-    protected abstract void ajoutAdjacence(int sommet , int voisin , int poids);
-    protected abstract Edge[] aretesOrdonnesComposant(int sommetDebut);
+    protected abstract void initGraph();
 
-
-
-
-
-
+    protected abstract void ajoutAdjacence(int sommet, int voisin, int poids);
 
 
 }
