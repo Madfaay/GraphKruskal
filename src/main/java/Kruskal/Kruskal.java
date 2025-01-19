@@ -62,14 +62,17 @@ public class Kruskal {
         // Récupérer les arêtes triées depuis le graphe
         Iterable<Edge> edges = graphe.parcourirEtRetournerAretes(ordre, sommeDepart);
 
+        int cout = 0;
         // Parcourir les arêtes triées
         for (Edge edge : edges) {
             // Si les deux sommets ne sont pas dans le même ensemble, les unir et ajouter l'arête
-            if (uf.union(edge.getSrc(), edge.getDest())) {
+            if (uf.union(edge.getSrc()-1, edge.getDest()-1)) {
                 mst.ajouter(edge);
+                cout = cout + edge.getWeight();
             }
         }
 
+        System.out.println("Le cout de l'arbre est "+cout);
         return mst;
     }
 
