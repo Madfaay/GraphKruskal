@@ -2,12 +2,16 @@ package Kruskal;
 
 import java.util.*;
 import Graph.Graph;
+import Graph.GrapheL;
+import Graph.GrapheM;
+
+import DataStructure.ListeChainee;
 
 public class Kruskal {
 
     // Union-Find (Disjoint Set)
     static class UnionFind {
-        private int[] parent;
+        private final int[] parent;
         private int[] rank;
 
         public UnionFind(int n) {
@@ -48,12 +52,12 @@ public class Kruskal {
     }
 
     // Méthode pour exécuter l'algorithme de Kruskal
-    public static List<Edge> kruskal(Graph graphe, int ordre, int sommeDepart) {
+    public static ListeChainee<Edge> kruskal(Graph graphe, int ordre, int sommeDepart) {
         // Union-Find pour gérer les ensembles disjoints
         UnionFind uf = new UnionFind(ordre);
 
         // Liste pour stocker les arêtes de l'arbre couvrant minimal
-        List<Edge> mst = new ArrayList<>();
+        ListeChainee<Edge> mst = new ListeChainee<>();
 
         // Récupérer les arêtes triées depuis le graphe
         Iterable<Edge> edges = graphe.parcourirEtRetournerAretes(ordre, sommeDepart);
@@ -62,12 +66,27 @@ public class Kruskal {
         for (Edge edge : edges) {
             // Si les deux sommets ne sont pas dans le même ensemble, les unir et ajouter l'arête
             if (uf.union(edge.getSrc(), edge.getDest())) {
-                mst.add(edge);
+                mst.ajouter(edge);
             }
         }
 
         return mst;
     }
 
+    public static void main(String[] args) {
 
+            String emplacementActuel = System.getProperty("user.dir");
+
+
+            GrapheL grapheL = new GrapheL("fichier.txt");
+
+
+            Iterable<Edge> edgesl = grapheL.parcourirEtRetournerAretes(grapheL.getOrdre() , 1);
+
+            ListeChainee<Edge> mst = kruskal(grapheL, grapheL.getOrdre(), 1);
+        System.out.println("Arêtes de l'arbre couvrant minimal :");
+        for (Edge edge : mst) {
+            System.out.println("De " + edge.getSrc() + " à " + edge.getDest() + " avec un poids de " + edge.getWeight());
+        }
+        }
 }
