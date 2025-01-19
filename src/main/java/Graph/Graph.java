@@ -15,6 +15,11 @@ public abstract class Graph implements Parcours {
     {
         return ordre;
     }
+
+    public boolean getConnexe()
+    {
+        return connexe;
+    }
     public Graph(String fileNameGraph) {
         File file = new File(fileNameGraph);
         Scanner sc = null;
