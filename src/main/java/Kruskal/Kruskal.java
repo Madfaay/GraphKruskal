@@ -89,7 +89,7 @@ public class Kruskal {
             ListeChainee<Edge> mst = kruskal(grapheL, grapheL.getOrdre(), 1);
         System.out.println("Arêtes de l'arbre couvrant minimal :");
         for (Edge edge : mst) {
-            System.out.println("De " + edge.getSrc() + " à " + edge.getDest() + " avec un poids de " + edge.getWeight());
+            System.out.println(edge.getSrc() + "-> " + edge.getDest() + " : " + edge.getWeight());
         }
         }
 }
